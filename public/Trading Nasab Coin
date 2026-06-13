@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nasab Coin - Demo Trading</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { background: #0a0a0a; color: white; font-family: Arial; padding: 15px; margin: 0; }
+    .card { background: #1a1a1a; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #333; }
+    .logo { width: 60px; height: 60px; border-radius: 50%; margin: auto; display: block; }
+    h1 { text-align: center; color: #f0b90b; }
+    .saldo { font-size: 24px; color: #0ecb81; text-align: center; }
+    .btn { width: 48%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; }
+    .buy { background: #0ecb81; color: black; }
+    .sell { background: #f6465d; color: white; }
+    input { width: 100%; padding: 10px; margin: 10px 0; background: #222; border: 1px solid #444; color: white; border-radius: 8px; }
+    .price { text-align: center; font-size: 20px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <img src="logo.png" class="logo" alt="NASAB">
+  <h1>Nasab Coin Demo</h1>
+  
+  <div class="card">
+    <div>Saldo Virtual</div>
+    <div class="saldo" id="saldoUSD">$10,000.00</div>
+    <div class="saldo" id="saldoNASAB">0 NASAB</div>
+  </div>
+
+  <div class="card">
+    <div class="price">Harga: $<span id="harga">0.0022</span></div>
+    <canvas id="chart"></canvas>
+  </div>
+
+  <div class="card">
+    <input type="number" id="jumlah" placeholder="Jumlah NASAB" value="100">
+    <button class="btn buy" onclick="beli()">BUY</button>
+    <button class="btn sell" onclick="jual()">SELL</button>
+    <p id="notif"></p>
+  </div>
+
+<script>
+let saldoUSD = 10000;
+let saldoNASAB = 0;
+let harga = 0.0022;
+
+const ctx = document.getElementById('chart');
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ['Sen','Sel','Rab','Kam','Jum','Sab','Min'],
+    datasets: [{
+      label: 'NASAB/USD',
+      data: [0.001,0.0012,0.0009,0.0015,0.0018,0.0016,0.0022],
+      borderColor: '#f0b90b',
+      backgroundColor: 'rgba(240,185,11,0.2)',
+      fill: true,
+      tension: 0.4
+    }]
+  },
+  options: { plugins: { legend: { labels: { color: 'white' } }, scales: { x: { ticks: { color: 'gray' } }, y: { ticks: { color: 'gray' }
+});
+
+function updateSaldo() {
+  document.getElementById('saldoUSD').innerText = '$' + saldoUSD.toFixed(2);
+  document.getElementById('saldoNASAB').innerText = saldoNASAB.toFixed(0) + ' NASAB';
+}
+
+function beli() {
+  let jml = parseFloat(document.getElementById('jumlah').value);
+  let cost = jml * harga;
+  if(cost > saldoUSD) {
+    notif('Saldo USD gak cukup bos!');
+    return;
+  }
+  saldoUSD -= cost;
+  saldoNASAB += jml;
+  notif('Beli ' + jml + ' NASAB berhasil ✅');
+  updateSaldo();
+}
+
+function jual() {
+  let jml = parseFloat(document.getElementById('jumlah').value);
+  if(jml > saldoNASAB) {
+    notif('NASAB lu gak cukup bos!');
+    return;
+  }
+  saldoUSD += jml * harga;
+  saldoNASAB -= jml;
+  notif('Jual ' + jml + ' NASAB berhasil 💰');
+  updateSaldo();
+}
+
+function notif(pesan) {
+  document.getElementById('notif').innerText = pesan;
+  setTimeout(() => document.getElementById('notif').innerText = '', 3000);
+}
+</script>
+</body>
+</html>
